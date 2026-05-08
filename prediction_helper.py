@@ -6,6 +6,18 @@ model_rest = joblib.load("artifacts/model_rest.joblib")
 scaler_young = joblib.load("artifacts/scaler_young.joblib")
 scaler_rest = joblib.load("artifacts/scaler_rest.joblib")
 
+def handle_scaling(age, df):
+    if age < 25:
+        scaler_object = scaler_young
+    else:
+        scaler_object = scaler_rest
+
+    cols_to_scale = scaler_object['cols_to_scale']
+    scaler = scaler_object['scaler']
+
+    df[cols_to_scale] = scaler.transform(df[cols_to_scale])
+
+    return df
 
 
 def preprocess_input(input_dict):
@@ -40,8 +52,19 @@ def preprocess_input(input_dict):
     if input_dict['gender_Male'] == 'Male':
         df['gender_Male'] = 1
     
-    if input_dict['gender_Male'] == 'Male':
-        df['gender_Male'] = 1
+    if input_dict['smoking_status'] == 'Occasional':
+        df['smoking_status_Occasional'] = 1
+    if input_dict['smoking_status'] == 'Regular':
+        df['smoking_status_Regular'] = 1
+
+    if input_dict['employment_status'] == 'Salaried':
+        df['employment_status_Salaried'] = 1
+    if input_dict['employment_status'] == 'Self-Employed':
+        df['employment_status_Self-Employed'] = 1
+
+    df = handle_scaling(input_dict['age'], df)
+
+    return df
 
 
 

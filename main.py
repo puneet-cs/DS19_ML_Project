@@ -1,4 +1,5 @@
 import streamlit as st
+from prediction_helper import predict
 
 st.title("Health insurance Premium Predict")
 
@@ -8,21 +9,12 @@ row2 = st.columns(3)
 row3 = st.columns(3)
 row4 = st.columns(3)
 
-"""
-Index(['age', 'region', 'number_of_dependants', 'bmi_category', 'income_lakhs',
-       'insurance_plan', 'genetical_risk', 'total_risk_score', 'gender_Male',
-       'smoking_status_Occasional', 'smoking_status_Regular',
-       'employment_status_Salaried', 'employment_status_Self-Employed'],
-      dtype='object')
-"""
 categorical_options = {
 "gender"  :  ['Male','Female'],
 "region"  :  ['Northwest', 'Southeast', 'Northeast' ,'Southwest'],
-"marital_status"  :  ['Unmarried' ,'Married'],
 "bmi_category"  :  ['Normal', 'Obesity' ,'Overweight' ,'Underweight'],
 "smoking_status"  :  ['No Smoking', 'Regular' ,'Occasional'],
 "employment_status"  :  ['Salaried', 'Self-Employed' ,'Freelancer'],
-"income_level"  :  ['<10L' ,'10L - 25L', '> 40L' ,'25L - 40L'],
 "insurance_plan"  :  ['Bronze', 'Silver', 'Gold']
 }
 
@@ -40,3 +32,33 @@ with row2[1]:
     income_lakhs = st.number_input("Income in Lakhs", min_value = 0, max_value = 100)
 with row2[2]:
     insurance_plan = st.selectbox('Insurance Plan', categorical_options["insurance_plan"])
+
+with row3[0]:
+    genetical_risk = st.number_input("Genetic Risk", min_value = 0, max_value = 5)
+with row3[1]:
+    total_risk_score = st.number_input("total_risk_score", min_value = 0, max_value = 14)
+with row3[2]:
+    gender_Male = st.selectbox('Gender', categorical_options["gender"])
+
+with row4[0]:
+    employment_status = st.selectbox('Employment Status', categorical_options["employment_status"])
+with row4[1]:
+    smoking_status = st.selectbox('Smoking Status', categorical_options["smoking_status"])
+
+input_dict = {
+    'age' : age,
+    'region' : region,
+    'number_of_dependants' : number_of_dependants,
+    'bmi_category' : bmi_category,
+    'income_lakhs' : income_lakhs,
+    'insurance_plan' : insurance_plan,
+    'genetical_risk' : genetical_risk,
+    'total_risk_score' : total_risk_score,
+    'gender_Male' : gender_Male,
+    'employment_status' : employment_status,
+    'smoking_status' : smoking_status
+}
+
+if st.button('PREDICT'):
+    prediction = predict(input_dict)
+    st.success(f"Your estimated Premium is this much: {prediction}")
